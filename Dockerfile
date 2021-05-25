@@ -9,6 +9,15 @@ FROM node:alpine
 #Specify a working directory
 WORKDIR /usr/app
 
+# ARG the ENV Variables
+ARG RANDOM_STRING 
+ARG ENVIRONMENT
+
+# Add ENV to container
+ENV RANDOM_STRING=${RANDOM_STRING}
+ENV ENVIRONMENT=${ENVIRONMENT}
+ENV API_PORT="8080"
+
 #Copy the dependencies file
 COPY ./package.json ./
 
