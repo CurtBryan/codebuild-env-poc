@@ -1,0 +1,31 @@
+version: 0.2
+
+env:
+  variables:
+    IMAGE_REPO_NAME: codebuild_env_poc
+
+phases:
+  install:
+    commands:
+      - echo Logging in to Amazon ECR...
+  pre_build:
+      commands:
+      - ls
+      - pwd
+      - cd $CODEBUILD_SRC_DIR
+      - export APP_VERSION=$PROJECT_VERSION.$CODEBUILD_BUILD_NUMBER
+      - export IMAGE_TAG=build-`echo $CODEBUILD_BUILD_ID | awk -F":" '{print $2}'`
+      - AWS_ACCOUNT_ID=`echo $CODEBUILD_BUILD_ARN | awk -F":" '{print $5}'`
+      - ECR_REPO=$AWS_ACCOUNT_ID.dkr.ecr.us-east-1.amazonaws.com/$IMAGE_REPO_NAME
+      - $(aws ecr get-login --no-include-email)
+  build:
+      commands:
+      - echo Build started on `date`
+      - echo Building the Docker image...
+      - docker build -t $ECR_REPO:$APP_VERSION .
+      - echo Pushing the Docker images...
+      - docker push $ECR_REPO:$APP_VERSION
+      - echo Build image completed.
+
+  post_build:
+    commands:
