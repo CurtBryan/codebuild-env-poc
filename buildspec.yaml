@@ -11,6 +11,7 @@ phases:
   pre_build:
       commands:
       - cd $CODEBUILD_SRC_DIR
+      - export APP_VERSION=$PROJECT_VERSION.$CODEBUILD_BUILD_NUMBER
       - AWS_ACCOUNT_ID=`echo $CODEBUILD_BUILD_ARN | awk -F":" '{print $5}'`
       - ECR_REPO=$AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME
       - $(aws ecr get-login --no-include-email)
